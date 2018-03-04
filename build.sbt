@@ -31,6 +31,27 @@ lazy val `magickeeper-impl` = (project in file("magickeeper-impl"))
   .settings(lagomForkedTestSettings: _*)
   .dependsOn(`magickeeper-api`)
 
+lazy val `cardlists-api` = (project in file("magickeeper-cardlists-api"))
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslApi
+    )
+  )
+
+lazy val `cardlists-impl` = (project in file("magickeeper-cardlists-impl"))
+  .enablePlugins(LagomScala)
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslPersistenceCassandra,
+      lagomScaladslKafkaBroker,
+      lagomScaladslTestKit,
+      macwire,
+      scalaTest
+    )
+  )
+  .settings(lagomForkedTestSettings: _*)
+  .dependsOn(`cardlists-api`)
+
 lazy val `web-gateway` = (project in file("gateway"))
   .enablePlugins(PlayScala && LagomPlay)
   .settings(
