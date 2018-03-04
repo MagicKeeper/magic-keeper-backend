@@ -30,3 +30,15 @@ lazy val `magickeeper-impl` = (project in file("magickeeper-impl"))
   )
   .settings(lagomForkedTestSettings: _*)
   .dependsOn(`magickeeper-api`)
+
+lazy val `web-gateway` = (project in file("gateway"))
+  .enablePlugins(PlayScala && LagomPlay)
+  .settings(
+    libraryDependencies ++= Seq(
+      lagomScaladslServer,
+      macwire,
+      scalaTest
+    ))
+  .dependsOn(`magickeeper-api`)
+
+
