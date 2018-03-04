@@ -8,28 +8,7 @@ val macwire = "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided"
 val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % Test
 
 lazy val `magickeeper` = (project in file("."))
-  .aggregate(`magickeeper-api`, `magickeeper-impl`)
-
-lazy val `magickeeper-api` = (project in file("magickeeper-api"))
-  .settings(
-    libraryDependencies ++= Seq(
-      lagomScaladslApi
-    )
-  )
-
-lazy val `magickeeper-impl` = (project in file("magickeeper-impl"))
-  .enablePlugins(LagomScala)
-  .settings(
-    libraryDependencies ++= Seq(
-      lagomScaladslPersistenceCassandra,
-      lagomScaladslKafkaBroker,
-      lagomScaladslTestKit,
-      macwire,
-      scalaTest
-    )
-  )
-  .settings(lagomForkedTestSettings: _*)
-  .dependsOn(`magickeeper-api`)
+  .aggregate(`cardlists-api`, `cardlists-impl`)
 
 lazy val `cardlists-api` = (project in file("magickeeper-cardlists-api"))
   .settings(
@@ -60,6 +39,6 @@ lazy val `web-gateway` = (project in file("gateway"))
       macwire,
       scalaTest
     ))
-  .dependsOn(`magickeeper-api`)
+  .dependsOn(`cardlists-api`)
 
 
