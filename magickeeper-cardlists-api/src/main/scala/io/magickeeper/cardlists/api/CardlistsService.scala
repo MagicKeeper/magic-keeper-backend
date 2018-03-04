@@ -65,6 +65,10 @@ object CardListChanged {
   implicit val format: Format[CardListChanged] = Json.format[CardListChanged]
 }
 
+/**
+  * This is more or less a workaround because Lagom doesn't want to use my map format if the map is a result type
+  * @param map the map in the cardlist
+  */
 case class CardList(map: Map[String, (Int, Int)])
 
 object CardList {
