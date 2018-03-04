@@ -6,8 +6,7 @@ import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
 import com.lightbend.lagom.scaladsl.persistence.{AggregateEvent, AggregateEventTag, PersistentEntity}
 import com.lightbend.lagom.scaladsl.playjson.{JsonSerializer, JsonSerializerRegistry}
-import io.magickeeper.cardlists.api.{CardList, CardListChanged}
-import play.api.libs.json.Json.JsValueWrapper
+import io.magickeeper.cardlists.api.CardList
 import play.api.libs.json._
 
 import scala.collection.immutable.Seq
@@ -57,7 +56,7 @@ class CardlistEntity extends PersistentEntity {
             val diff = ch(key)
             key -> (amt + diff._1, amtFoil + diff._2)
         } ++ change.filterNot { case (key, _) => state.cards.contains(key) } // add new cards
-          filterNot { case (_, (v1, v2)) => v1 == 0 && v2 == 0}) // remove cards with 0 cards
+          filterNot { case (_, (v1, v2)) => v1 == 0 && v2 == 0 }) // remove cards with 0 cards
     }
   }
 }

@@ -2,10 +2,8 @@ package io.magickeeper.cardlists.impl
 
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.ServiceCall
-import com.lightbend.lagom.scaladsl.api.broker.Topic
-import com.lightbend.lagom.scaladsl.broker.TopicProducer
-import com.lightbend.lagom.scaladsl.persistence.{EventStreamElement, PersistentEntityRegistry}
-import io.magickeeper.cardlists.api.{CardList, CardListChanged, CardlistsService}
+import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
+import io.magickeeper.cardlists.api.{CardList, CardlistsService}
 
 /**
   * Implementation of the MagickeeperService.
@@ -35,21 +33,5 @@ class CardlistsServiceImpl(persistentEntityRegistry: PersistentEntityRegistry) e
 
     // Submit the request to the entity
     ref.ask(GetListCommand)
-  }
-
-  /**
-    * This gets published to Kafka.
-    */
-  override def updateTopic(): Topic[CardListChanged] =
-    TopicProducer.singleStreamWithOffset {
-      fromOffset =>
-        persistentEntityRegistry.eventStream(CardlistEvent.Tag, fromOffset)
-          .map(ev => (convertEvent(ev), ev.offset))
-    }
-
-  private def convertEvent(cardListEvent: EventStreamElement[CardlistEvent]): CardListChanged = {
-    cardListEvent.event match {
-      case CardlistChanged(msg) => CardListChanged(cardListEvent.entityId, msg)
-    }
   }
 }

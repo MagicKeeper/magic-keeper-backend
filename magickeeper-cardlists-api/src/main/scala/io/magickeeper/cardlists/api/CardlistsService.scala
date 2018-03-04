@@ -2,14 +2,9 @@ package io.magickeeper.cardlists.api
 
 import akka.{Done, NotUsed}
 import com.lightbend.lagom.scaladsl.api.broker.Topic
-import com.lightbend.lagom.scaladsl.api.broker.kafka.{KafkaProperties, PartitionKeyStrategy}
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
-
-object CardlistsService  {
-  val TOPIC_NAME = "cardlistChange"
-}
 
 /**
   * The CardLists service interface.
@@ -31,11 +26,6 @@ trait CardlistsService extends Service {
     */
   def getList(id: String): ServiceCall[NotUsed, CardList]
 
-  /**
-    * This gets published to Kafka.
-    */
-  def updateTopic(): Topic[CardListChanged]
-
   override final def descriptor = {
     import Service._
     named("cardlists")
@@ -43,26 +33,8 @@ trait CardlistsService extends Service {
         pathCall("/list/:id", getList _),
         pathCall("/list/:id", updateList _)
       )
-      .withTopics(
-        topic(CardlistsService.TOPIC_NAME, updateTopic())
-          .addProperty(
-            KafkaProperties.partitionKeyStrategy,
-            PartitionKeyStrategy[CardListChanged](_.id) // partition messages using the unique collection ID
-          )
-      )
       .withAutoAcl(true)
   }
-}
-
-/**
-  *
-  * @param id the id of the cardlist to update
-  * @param change the cards changed (id of the card -> (change, change foil))
-  */
-case class CardListChanged(id: String, change: Map[String, (Int, Int)])
-
-object CardListChanged {
-  implicit val format: Format[CardListChanged] = Json.format[CardListChanged]
 }
 
 /**
